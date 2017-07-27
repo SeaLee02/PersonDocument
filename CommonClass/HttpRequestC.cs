@@ -29,9 +29,9 @@ namespace Common
         /// <param name="key">参数名</param>
         /// <param name="iDefault">默认值</param>
         /// <returns>返回整型</returns>
-        public static int iQ(string key,int iDefault=0)
+        public static int iQ(string key, int iDefault = 0)
         {
-            if (hr.QueryString[key]!=null)
+            if (hr.QueryString[key] != null)
             {
                 iDefault = Convert.ToInt32(hr.QueryString[key]);
             }
@@ -44,7 +44,7 @@ namespace Common
         /// <param name="key">参数名</param>
         /// <param name="iDefault">默认值</param>
         /// <returns>返回字符串</returns>
-        public static string sQ(string key, string sDefault ="")
+        public static string sQ(string key, string sDefault = "")
         {
             if (hr.QueryString[key] != null)
             {
@@ -85,6 +85,56 @@ namespace Common
         }
 
 
+      /// <summary>
+      /// 设置Cookie值
+      /// </summary>
+      /// <param name="Name">名字</param>
+      /// <param name="strValue">值</param>
+      /// <param name="key">键，这是个可选参数</param>
+        public static void WriteCookie(string Name, string strValue, string key = "")
+        {
+            HttpCookie cookie = hr.Cookies[Name];
+            if (cookie == null)
+            {
+                cookie = new HttpCookie(Name);
+            }
+            if (key!="")
+            {
+                cookie.Values[key] = HttpContext.Current.Server.UrlEncode(strValue);
+            }
+            else
+            {
+                cookie.Value = HttpContext.Current.Server.UrlEncode(strValue);  //中文需要编码
+            }         
+            HttpContext.Current.Response.Cookies.Add(cookie);
+        }
+
+
+
+       /// <summary>
+       /// 获取Cookies值
+       /// </summary>
+       /// <param name="Name">名字</param>
+       /// <param name="key">键</param>
+       /// <returns>返回cookies值</returns>
+        public static string GetCookie(string Name,string key="")
+        {
+            if (HttpContext.Current.Request.Cookies != null && HttpContext.Current.Request.Cookies[Name] != null)
+            {
+                if (key!="")
+                {
+                    return HttpContext.Current.Server.UrlDecode(HttpContext.Current.Request.Cookies[Name][key]);
+                }
+                else
+                {
+                    return HttpContext.Current.Server.UrlDecode(HttpContext.Current.Request.Cookies[Name].Value); //编码需要解码
+                }               
+            }
+            return "";
+        }
+
+
+     
 
 
 
@@ -127,7 +177,7 @@ namespace Common
         public static string GetUrlReferrer()
         {
             string retVal = "";
-            if (hr.UrlReferrer!=null)
+            if (hr.UrlReferrer != null)
             {
                 retVal = hr.UrlReferrer.ToString();
             }
@@ -171,7 +221,7 @@ namespace Common
         public static bool IsBrowserGet()
         {
             //把浏览器的名字写进集合里面
-            string[] BrowserName = { "chrome","ie", "opera", "netscape", "mozilla", "konqueror", "firefox" };
+            string[] BrowserName = { "chrome", "ie", "opera", "netscape", "mozilla", "konqueror", "firefox" };
             string curBrowser = hr.Browser.Type.ToLower();
             for (int i = 0; i < BrowserName.Length; i++)
             {
@@ -191,7 +241,7 @@ namespace Common
                 return false;
 
             string[] SearchEngine = { "google", "yahoo", "msn", "baidu", "sogou", "sohu", "sina", "163", "lycos", "tom", "yisou", "iask", "soso", "gougou", "zhongsou" };
-            string tmpReferrer =hr.UrlReferrer.ToString().ToLower();
+            string tmpReferrer = hr.UrlReferrer.ToString().ToLower();
             for (int i = 0; i < SearchEngine.Length; i++)
             {
                 if (tmpReferrer.IndexOf(SearchEngine[i]) >= 0)
